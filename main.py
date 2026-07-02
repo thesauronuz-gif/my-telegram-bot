@@ -8,11 +8,20 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton
 from aiohttp import web
 
-# BOT SOZLAMALARI
-BOT_TOKEN = "8572560610:AAEBjz6nR6-eVHimmB7QgZjLX9DkXdW0tBA"
-MAIN_CHANNEL_ID = -1003394493877                      # Asosiy kanal ID-si
-MAIN_CHANNEL_LINK = "https://t.me/biologiya_kimyo_yonalishi"  # Asosiy kanalingiz ssilkasi
-SECRET_CHANNEL_LINK = "https://t.me/+yUONzDEUCag3ZWJi"  # Maxfiy kanal ssilkasi
+# =====================================================================
+# 🛠️ SOZLAMALAR (SIZNING SHAXSIY MA'LUMOTLARINGIZ O'RNATILDI ⚙️)
+# =====================================================================
+BOT_TOKEN = "8572560610:AAENghU7fxHYp_Yx4iq-wZAtmM_9RkmYgU4"
+
+# Siz taqdim etgan to'g'ri kanal ID raqami:
+MAIN_CHANNEL_ID = -1003394493877  
+
+# Asosiy kanal a'zolik linki:
+MAIN_CHANNEL_LINK = "https://t.me/+fT9YFqfG-I00M2Ey"  
+
+# 5 ta odam yig'gandan keyin ochiladigan maxfiy havola:
+SECRET_CHANNEL_LINK = "https://t.me/+yUONzDEUCag3ZWJi"  
+# =====================================================================
 
 logging.basicConfig(level=logging.INFO)
 
@@ -90,7 +99,7 @@ async def send_referral_notification(referrer_id: int, current_count: int):
     except Exception as e:
         logging.error(f"Xabar yuborishda xatolik: {e}")
 
-# KANALGA A'ZOLIKNI TEKSHIRISH FUNKSIYASI (Eng ishonchli qism)
+# KANALGA A'ZOLIKNI TEKSHIRISH
 async def check_subscription(user_id: int) -> bool:
     try:
         member = await bot.get_chat_member(chat_id=MAIN_CHANNEL_ID, user_id=user_id)
@@ -134,13 +143,11 @@ async def start_cmd(message: types.Message):
 async def process_check_sub(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     
-    # 1. Eng birinchi navbatda aynan shu soniyada kanalga a'zoligi tekshiriladi!
     is_subscribed = await check_subscription(user_id)
     if not is_subscribed:
         await callback.answer("Hali asosiy kanalga a'zo bo'lmabsiz-ku, usta!  ❌ Avval a'zo bo'ling, keyin ssilka beriladi!", show_alert=True)
         return
         
-    # 2. Keyin odam soni tekshiriladi
     ref_count = get_referral_count(user_id)
     if ref_count < 5:
         needed = 5 - ref_count
@@ -152,7 +159,6 @@ async def process_check_sub(callback: types.CallbackQuery):
         )
         return
         
-    # Agar ikkala shart ham bajarilgan bo'lsa:
     await callback.message.answer(
         f"Uuuu, daxshat! Gap bo'lishi mumkin emas! 🏁🎉\n\n"
         f"Siz haqiqiy professonalsiz. Hamma shartlar "
@@ -167,7 +173,6 @@ async def process_check_sub(callback: types.CallbackQuery):
 async def process_my_ref(callback: types.CallbackQuery):
     user_id = callback.from_user.id
     
-    # Firgarlikni oldini olish: Kanalga a'zo bo'lmaguncha shaxsiy ssilkani ham ko'rsatmaydi!
     is_subscribed = await check_subscription(user_id)
     if not is_subscribed:
         await callback.answer("To'xtang, usta! 🛑\n\nAvval 1-shartni bajarib, 'Asosiy kanal'ga a'zo bo'ling! Shundan keyingina sizga do'stlarni taklif qilish uchun shaxsiy ssilka beriladi! 😉", show_alert=True)
